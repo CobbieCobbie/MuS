@@ -71,7 +71,7 @@ public abstract class Counter implements IStatisticObject{
 		 * You can use other methods of this class in order to calculate the standard deviation
 		 * Hint: See course syllabus 1.3.4
 		 */
-		double sdev = 0.0;
+		double sdev = Math.sqrt(getVariance());
 		return sdev;
 	}
 
@@ -85,6 +85,9 @@ public abstract class Counter implements IStatisticObject{
 		 * Implement this function!
 		 * Hint: Take a look at the javadoc comment of this method
 		 */
+		min = Math.min(x,min);
+		max = Math.max(x,max);
+		numSamples = numSamples+1;
 	}
 
 	/**
@@ -98,6 +101,7 @@ public abstract class Counter implements IStatisticObject{
 		 * This method updates internal data "sumPowerOne" which is needed for the calculation of empirical moments
 		 * Hint: DiscreteCounter and ContinuousCounter pass different values to this method
 		 */
+		sumPowerOne = sumPowerOne + value;
 	}
 
 	/**
@@ -111,6 +115,7 @@ public abstract class Counter implements IStatisticObject{
 		 * This method updates internal data "sumPowerTwo" which is needed for the calculation of empirical moments
 		 * Hint: DiscreteCounter and ContinuousCounter pass different values to this method
 		 */
+		sumPowerTwo = sumPowerTwo + value;
 	}
 	
 	/**

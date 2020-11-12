@@ -32,8 +32,16 @@ public class DiscreteCounter extends Counter {
 		 * Implement this function!
 		 * Hint: See course syllabus 1.4.1 ff.
 		 */
-		double mean = 0.0;
-		return mean;
+
+		if (this.getNumSamples() == 0)
+		{
+			return 0;
+		}
+		else
+		{
+			return this.sumPowerOne / this.getNumSamples();
+		}
+
 	}
 	
 	/**
@@ -46,8 +54,14 @@ public class DiscreteCounter extends Counter {
 		 * Implement this function!
 		 * Hint: See course syllabus 1.4.1 ff.
 		 */
-		double variance = 0.0;
-		return variance;
+		if (this.getNumSamples() > 1)
+		{
+			return (getNumSamples() / (getNumSamples() - 1)) * (sumPowerTwo - sumPowerOne * sumPowerOne);
+		}
+		else
+		{
+			return 0;
+		}
 	}
 	
 	/**
@@ -61,5 +75,7 @@ public class DiscreteCounter extends Counter {
 		 * Implement this function!
 		 * Hint: See course syllabus 1.5.1
 		 */
+		increaseSumPowerOne(x);
+		increaseSumPowerTwo(x*x);
 	}
 }

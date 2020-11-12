@@ -31,7 +31,11 @@ public class ContinuousCounter extends Counter {
 		 * Implement this function!
 		 * Hint: See course syllabus 1.5.3.2
 		 */
-		double mean = 0.0;
+		double mean = 0.0, intervall = lastSampleTime - firstSampleTime;
+		if (intervall > 0)
+		{
+			mean = getSumPowerOne() / intervall;
+		}
 		return mean;
 	}
 	
@@ -45,7 +49,11 @@ public class ContinuousCounter extends Counter {
 		 * Implement this function!
 		 * Hint: See course syllabus 1.5.3.2 and 1.4.1 ff.
 		 */
-		double variance = 0.0;
+		double variance = 0.0, intervall = lastSampleTime - firstSampleTime;
+		if (intervall > 1)
+		{
+			variance = getSumPowerTwo() / intervall - getMean() * getMean();
+		}
 		return variance;
 	}
 
@@ -62,6 +70,11 @@ public class ContinuousCounter extends Counter {
 		 * Also update lastSampleSize and lastSampleTime
 		 * Hint: See course syllabus 1.5.3.2
 		 */
+		long intervall = sim.getSimTime() - lastSampleTime;
+		increaseSumPowerOne(intervall * lastSampleSize);
+		increaseSumPowerTwo(intervall * lastSampleSize * lastSampleSize);
+		lastSampleTime = sim.getSimTime();
+		lastSampleSize = x;
 	}
 
 	/**
