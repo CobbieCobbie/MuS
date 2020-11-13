@@ -145,10 +145,10 @@ public class SimulationStudy {
           Here you have to create your counters and add them to the statisticObjects HashMap
           Use the name which you specified above as the key
          */
-        statisticObjects.put(dcWaitingTime, new DiscreteCounter("waiting time/customer"));
-        statisticObjects.put(dcServiceTime, new DiscreteCounter("service time/customer"));
-        statisticObjects.put(dhWaitingTime, new DiscreteHistogram("waiting time/customer", 100, 0 ,100));
-		statisticObjects.put(dhServiceTime, new DiscreteHistogram("service time/customer", 100, 0, 100));
+        statisticObjects.put(dcWaitingTime, new DiscreteCounter("waiting time customer"));
+        statisticObjects.put(dcServiceTime, new DiscreteCounter("service time customer"));
+        statisticObjects.put(dhWaitingTime, new DiscreteHistogram("waiting time customer", 100, 0 ,100));
+		statisticObjects.put(dhServiceTime, new DiscreteHistogram("service time customer", 100, 0, 100));
 		//contin
 		statisticObjects.put(ccQueueOccupancy, new ContinuousCounter("Queue occupancy", simulator));
 		statisticObjects.put(ccServerUtilization, new ContinuousCounter("Server Utilization", simulator));
