@@ -6,6 +6,10 @@ import java.util.Date;
 import java.util.HashMap;
 
 import simulation.lib.Simulator;
+import simulation.lib.counter.ContinuousCounter;
+import simulation.lib.counter.DiscreteCounter;
+import simulation.lib.histogram.ContinuousHistogram;
+import simulation.lib.histogram.DiscreteHistogram;
 import simulation.lib.statistic.IStatisticObject;
 
 /**
@@ -20,8 +24,8 @@ public class SimulationStudy {
 	 * They get converted to simulation time units in setSimulationParameters.
 	 */
 	protected long cInterArrivalTime = 10;
-	protected long cServiceTime = 11;
-	protected long cSimulationTime = 10000;
+	protected long cServiceTime = 9;
+	protected long cSimulationTime = 1000;
 
 	/**
 	 * Main method
@@ -90,8 +94,19 @@ public class SimulationStudy {
 	 * Here you have to set some names (as Sting objects) for all your statistic objects
 	 * They are later used to retrieve them from the dictionary
 	 */
-	// Example for discrete counter which measures customer waiting time:
-	// public String dcWaitingTime = "discreteCounterWaitingTime";
+	// Discrete statistic object strings
+
+	public String dcWaitingTime = "discreteCounterWaitingTime";
+	public String dcServiceTime = "discreteCounterServiceTime";
+	public String dhWaitingTime = "discreteHistogramWaitingTime";
+	public String dhServiceTime = "discreteHistogramServiceTime";
+
+	// Continuous statistic object strings
+
+	public String ccQueueOccupancy = "continuousCounterQueueOccupancy";
+	public String ccServerUtilization = "continuousCounterServerUtilization";
+	public String chQueueOccupancy = "continuousHistogramQueueOccupancy";
+	public String chServerUtilization = "continuousHistogramServerUtilization";
 
 	private Simulator simulator;
 
@@ -130,7 +145,16 @@ public class SimulationStudy {
           Here you have to create your counters and add them to the statisticObjects HashMap
           Use the name which you specified above as the key
          */
-        // Example: statisticObjects.put(dcWaitingTime, new DiscreteCounter("waiting time/customer"));
+        statisticObjects.put(dcWaitingTime, new DiscreteCounter("waiting time/customer"));
+        statisticObjects.put(dcServiceTime, new DiscreteCounter("service time/customer"));
+        statisticObjects.put(dhWaitingTime, new DiscreteHistogram("waiting time/customer", 100, 0 ,100));
+		statisticObjects.put(dhServiceTime, new DiscreteHistogram("service time/customer", 100, 0, 100));
+		//contin
+		statisticObjects.put(ccQueueOccupancy, new ContinuousCounter("Queue occupancy", simulator));
+		statisticObjects.put(ccServerUtilization, new ContinuousCounter("Server Utilization", simulator));
+		statisticObjects.put(chQueueOccupancy, new ContinuousHistogram("Queue occupancy histogram", 100, 0, 100, simulator));
+		statisticObjects.put(chServerUtilization, new ContinuousHistogram("Server Utilizatoin histogram", 100, 0, 100, simulator));
+
 	}
 
 

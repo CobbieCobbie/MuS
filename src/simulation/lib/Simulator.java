@@ -178,7 +178,11 @@ public class Simulator implements IEventObserver{
          * You can retrieve your statistic objects from the SimulationStudy by using the name Strings
          * e.g. IStatisticObject statObj = this.sims.statisticObjects.get(this.sims.dcWaitingTime)
          */
-
+		if (state.serverBusy)
+		{
+			sims.statisticObjects.get(sims.chServerUtilization).count(1);
+			sims.statisticObjects.get(sims.ccServerUtilization).count(1);
+		}
 	}
 
 	/**
@@ -198,6 +202,11 @@ public class Simulator implements IEventObserver{
              * and its waiting time (getTimeInQueue())
              */
 
+			sims.statisticObjects.get(sims.dhServiceTime).count(currentCustomer.getTimeInService());
+			sims.statisticObjects.get(sims.dcServiceTime).count(currentCustomer.getTimeInService());
+			sims.statisticObjects.get(sims.dcWaitingTime).count(currentCustomer.getTimeInQueue());
+			sims.statisticObjects.get(sims.dhWaitingTime).count(currentCustomer.getTimeInQueue());
+
         }
 
         /*
@@ -205,6 +214,11 @@ public class Simulator implements IEventObserver{
          * Update the server utilization in your corresponding counter and histogram
          * Therefore, check if the server is busy (state.serverBusy flag)
          */
+		if (state.serverBusy)
+		{
+			sims.statisticObjects.get(sims.ccServerUtilization).count(1);
+			sims.statisticObjects.get(sims.chServerUtilization).count(1);
+		}
 	}
 
     /**
@@ -223,6 +237,8 @@ public class Simulator implements IEventObserver{
          * TODO Problem 2.2.3 - update queue occupancy here
          * Count the queue size with your respective statistic objects
          */
+		sims.statisticObjects.get(sims.ccQueueOccupancy).count(state.queueSize);
+		sims.statisticObjects.get(sims.chQueueOccupancy).count(state.queueSize);
 	}
 
 	/**
