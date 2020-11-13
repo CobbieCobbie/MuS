@@ -28,6 +28,11 @@ public class DiscreteHistogram extends Histogram {
 		 * Also update numSamples
 		 * Hint: See course syllabus 1.5.2
 		 */
+		if (this.getNumIntervals() > 0)
+		{
+			incrementBin(getBinNumber(x),1);
+			numSamples++;
+		}
 	}
 	
 	/**

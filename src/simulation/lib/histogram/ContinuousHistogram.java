@@ -38,6 +38,13 @@ public class ContinuousHistogram extends Histogram {
 		 * Also update lastSampleSize and lastSampleTime appropriately
 		 * Hint: See course syllabus 1.5.4
 		 */
+		long time = sim.getSimTime() - lastSampleTime;
+		if (getNumIntervals() > 0)
+		{
+			incrementBin(getBinNumber(lastSampleSize), time);
+			lastSampleTime = sim.getSimTime();
+		}
+		lastSampleSize = x;
 	}
 	
 	/**
