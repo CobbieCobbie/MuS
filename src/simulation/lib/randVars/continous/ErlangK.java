@@ -12,56 +12,70 @@ import simulation.lib.rng.RNG;
  */
 public class ErlangK extends RandVar {
 
-	public ErlangK(RNG rng) {
+	double lambda;
+	int k;
+
+	public ErlangK(RNG rng, double lambda, int k) {
 		super(rng);
-		// TODO Auto-generated constructor stub
+		this.lambda = lambda;
+		this.k = k;
 	}
 
 	@Override
 	public double getRV() {
-		// TODO Auto-generated method stub
-		return 0;
+		double p = 1;
+		for (int i = 0; i<k; i++)
+		{
+			p *= rng.rnd();
+		}
+		return (-1) / lambda * Math.log(p);
 	}
 
 	@Override
 	public double getMean() {
-		// TODO Auto-generated method stub
-		return 0;
+		return k / lambda;
 	}
 
 	@Override
 	public double getVariance() {
-		// TODO Auto-generated method stub
-		return 0;
+		return k / (lambda * lambda);
 	}
 
 	@Override
 	public void setMean(double m) {
-		// TODO Auto-generated method stub
-
+		if (m > 0)
+		{
+			lambda = k / m;
+		}
+		else
+		{
+			throw new IllegalArgumentException("Mean must be positive!");
+		}
 	}
 
 	@Override
 	public void setStdDeviation(double s) {
-		// TODO Auto-generated method stub
+		double m = getMean();
+		k = (int) Math.floor((m * m) / (s * s));
+		lambda = k / m;
 
 	}
 
 	@Override
 	public void setMeanAndStdDeviation(double m, double s) {
-		// TODO Auto-generated method stub
-
+		setMean(m);
+		setStdDeviation(s);
 	}
 
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Erlang-" + k;
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		return super.toString() + "\nParameters:\n" +
+				"lambda: " + lambda +
+				"\nk: " + k + "\n";
 	}		
 }

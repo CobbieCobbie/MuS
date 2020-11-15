@@ -15,57 +15,66 @@ import simulation.lib.rng.RNG;
  */
 public class Exponential extends RandVar {
 
-	public Exponential(RNG rng) {
+	double lambda;
+
+	public Exponential(RNG rng, double lambda) {
 		super(rng);
-		// TODO Auto-generated constructor stub
+		this.lambda = lambda;
 	}
 
 	@Override
 	public double getRV() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (-1) * Math.log(rng.rnd()) / lambda; // According to script
 	}
 
 	@Override
 	public double getMean() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1 / (lambda);
 	}
 
 	@Override
 	public double getVariance() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1 / (lambda * lambda);
 	}
 
 	@Override
 	public void setMean(double m) {
-		// TODO Auto-generated method stub
-
+		if (m > 0)
+		{
+			lambda = (1 / m);
+		}
+		else
+		{
+			throw new IllegalArgumentException("The mean is positive !");
+		}
 	}
 
 	@Override
 	public void setStdDeviation(double s) {
-		// TODO Auto-generated method stub
+		if (s > 0){
+			lambda = 1 / s;
+		}
+		else
+		{
+			throw new IllegalArgumentException("The Standard deviation is positive!");
+		}
 
 	}
 
 	@Override
 	public void setMeanAndStdDeviation(double m, double s) {
-		// TODO Auto-generated method stub
-
+		setMean(m);
+		setStdDeviation(s);
 	}
 
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Exponential";
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		return super.toString() + "\n lambda: " + lambda + "\n";
 	}
 	
 }

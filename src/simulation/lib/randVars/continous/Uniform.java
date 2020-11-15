@@ -12,57 +12,64 @@ import simulation.lib.rng.RNG;
  */
 public class Uniform extends RandVar {
 
-	public Uniform(RNG rng) {
+	double leftBound, rightBound;
+
+	public Uniform(RNG rng, double a, double b) {
 		super(rng);
-		// TODO Auto-generated constructor stub
+		leftBound = a;
+		rightBound = b;
+
 	}
 
 	@Override
 	public double getRV() {
-		// TODO Auto-generated method stub
-		return 0;
+		return rightBound - (rightBound-leftBound)*rng.rnd();
 	}
 
 	@Override
 	public double getMean() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (rightBound + leftBound) / 2;
 	}
 
 	@Override
 	public double getVariance() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (rightBound - leftBound) * (rightBound - leftBound) / 12;
 	}
 
 	@Override
 	public void setMean(double m) {
-		// TODO Auto-generated method stub
-
+		//setting a new mean without any further parameters will shift a and b, with its respective distance
+		double distance = Math.abs(rightBound - leftBound);
+		leftBound = m - (distance / 2);
+		rightBound = leftBound + distance;
 	}
 
 	@Override
 	public void setStdDeviation(double s) {
-		// TODO Auto-generated method stub
-
+		//setting a new stdDeviation will shift a and b according to the mean
+		double variance = s * s;
+		double newDistance = Math.sqrt(variance * 12);
+		double m = getMean();
+		leftBound = m - newDistance / 2;
+		rightBound = leftBound + newDistance;
 	}
 
 	@Override
 	public void setMeanAndStdDeviation(double m, double s) {
-		// TODO Auto-generated method stub
-
+		setMean(m);
+		setStdDeviation(s);
 	}
 
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Uniform";
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		return super.toString() + "Parameters: \n" +
+				"Left Bound: " + leftBound +
+				"\nRight Bound" + rightBound + "\n";
 	}
 	
 }
