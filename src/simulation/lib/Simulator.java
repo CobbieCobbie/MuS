@@ -182,6 +182,8 @@ public class Simulator implements IEventObserver{
 		{
 			sims.statisticObjects.get(sims.chServerUtilization).count(1);
 			sims.statisticObjects.get(sims.ccServerUtilization).count(1);
+			sims.statisticObjects.get(sims.dcServerUtilization).count(1);
+			sims.statisticObjects.get(sims.dhServerUtilization).count(1);
 		}
 	}
 
@@ -218,6 +220,8 @@ public class Simulator implements IEventObserver{
 		{
 			sims.statisticObjects.get(sims.ccServerUtilization).count(1);
 			sims.statisticObjects.get(sims.chServerUtilization).count(1);
+			sims.statisticObjects.get(sims.dcServerUtilization).count(1);
+			sims.statisticObjects.get(sims.dhServerUtilization).count(1);
 		}
 	}
 
@@ -239,6 +243,8 @@ public class Simulator implements IEventObserver{
          */
 		sims.statisticObjects.get(sims.ccQueueOccupancy).count(state.queueSize);
 		sims.statisticObjects.get(sims.chQueueOccupancy).count(state.queueSize);
+		sims.statisticObjects.get(sims.dcQueueOccupancy).count(state.queueSize);
+		sims.statisticObjects.get(sims.dhQueueOccupancy).count(state.queueSize);
 	}
 
 	/**

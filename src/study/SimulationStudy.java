@@ -24,8 +24,8 @@ public class SimulationStudy {
 	 * They get converted to simulation time units in setSimulationParameters.
 	 */
 	protected long cInterArrivalTime = 10;
-	protected long cServiceTime = 11;
-	protected long cSimulationTime = 10000;
+	protected long cServiceTime = 9;
+	protected long cSimulationTime = 1000;
 
 	/**
 	 * Main method
@@ -100,6 +100,10 @@ public class SimulationStudy {
 	public String dcServiceTime = "discreteCounterServiceTime";
 	public String dhWaitingTime = "discreteHistogramWaitingTime";
 	public String dhServiceTime = "discreteHistogramServiceTime";
+	public String dcQueueOccupancy = "discreteCounterQueueOccupancy";
+	public String dhQueueOccupancy = "discreteHistogramQueueOccupancy";
+	public String dcServerUtilization = "discreteCounterServerUtilization";
+	public String dhServerUtilization = "discreteHistogramServerUtilization";
 
 	// Continuous statistic object strings
 
@@ -119,6 +123,7 @@ public class SimulationStudy {
 		simulator.setSimTimeInRealTime(1000);
 		setSimulationParameters();
 		initStatistics();
+		RandVarTest.testRandVars();
 	}
 
 	/**
@@ -154,6 +159,11 @@ public class SimulationStudy {
 		statisticObjects.put(ccServerUtilization, new ContinuousCounter("Server Utilization", simulator));
 		statisticObjects.put(chQueueOccupancy, new ContinuousHistogram("Queue occupancy histogram", 100, 0, 100, simulator));
 		statisticObjects.put(chServerUtilization, new ContinuousHistogram("Server Utilizatoin histogram", 100, 0, 100, simulator));
+
+		statisticObjects.put(dcQueueOccupancy, new DiscreteCounter("Queue occupancy discrete"));
+		statisticObjects.put(dcServerUtilization, new DiscreteCounter("Server Utilization discrete"));
+		statisticObjects.put(dhQueueOccupancy, new DiscreteHistogram("Queue occupancy histogram discrete", 100, 0, 100));
+		statisticObjects.put(dhServerUtilization, new DiscreteHistogram("Server Utilizatoin histogram discrete", 100, 0, 100));
 
 	}
 

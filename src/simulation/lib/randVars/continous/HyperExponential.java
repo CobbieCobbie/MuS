@@ -13,9 +13,13 @@ import static java.lang.Math.*;
  */
 public class HyperExponential extends RandVar {
 
-	public HyperExponential(RNG rng) {
+	double k;
+	double[] p;
+	double[] lambda;
+
+	public HyperExponential(RNG rng, double k, double[] p, double[] lambda) {
 		super(rng);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override

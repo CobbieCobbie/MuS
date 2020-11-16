@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="MuS_2:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/MuS_2_jar</output-path>
+    <root id="archive" name="MuS.jar">
+      <element id="module-output" name="MuS" />
+      <element id="module-source" name="MuS" />
+    </root>
+  </artifact>
+</component>
