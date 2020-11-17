@@ -13,60 +13,64 @@ import static java.lang.Math.*;
  */
 public class HyperExponential extends RandVar {
 
-	double k;
-	double[] p;
-	double[] lambda;
+	double mean, lambda1, lambda2, p1, p2;
 
-	public HyperExponential(RNG rng, double k, double[] p, double[] lambda) {
+	public HyperExponential(RNG rng, double lambda1, double lambda2, double p1, double p2) {
 		super(rng);
-		
+		this.lambda1 = lambda1;
+		this.lambda2 = lambda2;
+		this.p1 = p1;
+		this.p2 = p2;
 	}
 
 	@Override
 	public double getRV() {
-		// TODO Auto-generated method stub
-		return 0;
+		double p = rng.rnd();
+		if (p1 >= p)
+		{
+			return -Math.log(rng.rnd())/lambda1;
+		}
+		else
+		{
+			return -Math.log(rng.rnd())/lambda2;
+		}
 	}
 
 	@Override
 	public double getMean() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (p1 / lambda1) + (p2 / lambda2);
 	}
 
 	@Override
 	public double getVariance() {
-		// TODO Auto-generated method stub
-		return 0;
+		double m2 = 2 * (p1 / (lambda1 * lambda1) + p2 / (lambda2 * lambda2));
+		return m2 - getMean() * getMean();
 	}
 
 	@Override
 	public void setMean(double m) {
-		// TODO Auto-generated method stub
-
+		mean = m;
 	}
 
 	@Override
 	public void setStdDeviation(double s) {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void setMeanAndStdDeviation(double m, double s) {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Hyperexponential";
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		return super.toString() + "\nParameters:\n"
+				+ "lambda1: " + lambda1 + ", p1: " + p1 + "\n"
+				+ "lambda2: " + lambda2 + ", p2: " + p2;
 	}
 }
