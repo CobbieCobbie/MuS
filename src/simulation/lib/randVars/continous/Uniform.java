@@ -3,73 +3,109 @@ package simulation.lib.randVars.continous;
 import simulation.lib.randVars.RandVar;
 import simulation.lib.rng.RNG;
 
-/*
- * TODO Problem 2.3.2 - implement this class (section 3.2.1 in course syllabus)
- * !!! If an abstract class method does not make sense to be implemented in a particular RandVar class,
- * an UnsupportedOperationException should be thrown !!!
- *
+/**
  * Uniform distributed random variable.
  */
 public class Uniform extends RandVar {
-
-	double leftBound, rightBound;
-
-	public Uniform(RNG rng, double a, double b) {
+	private double lowerBound;
+	private double upperBound;
+	
+	/**
+	 * Constructor 1
+	 * @param rng random number generator
+	 */
+	public Uniform(RNG rng) {
+		this(rng,0,1);
+	}
+	
+	/**
+	 * Constructor 2
+	 * @param rng random number generator
+	 * @param lowerBound lower bound
+	 * @param upperBound upper bound
+	 */
+	public Uniform(RNG rng, double lowerBound, double upperBound) {
 		super(rng);
-		leftBound = a;
-		rightBound = b;
-
+		setBounds(lowerBound, upperBound);
 	}
-
-	@Override
-	public double getRV() {
-		return rightBound - (rightBound-leftBound)*rng.rnd();
+	
+	/**
+	 * Set bounds of random variable
+	 * @param lowerBound lower bound
+	 * @param upperBound upper bound
+	 */
+	protected void setBounds(double lowerBound, double upperBound) {
+		if(lowerBound>=upperBound)
+			throw new IllegalArgumentException("uniform distribution: lower bound must not be greater then upper bound");
+		this.lowerBound = lowerBound;
+		this.upperBound = upperBound;
 	}
-
+	
+	/**
+	 * @see RandVar#getMean()
+	 */
 	@Override
 	public double getMean() {
-		return (rightBound + leftBound) / 2;
+		return (upperBound+lowerBound)/2;
 	}
 
+	/**
+	 * @see RandVar#getRV()
+	 */
 	@Override
-	public double getVariance() {
-		return (rightBound - leftBound) * (rightBound - leftBound) / 12;
+	public double getRV() {
+		return lowerBound + rng.rnd() * (upperBound - lowerBound);
 	}
 
-	@Override
-	public void setMean(double m) {
-		//setting a new mean without any further parameters will shift a and b, with its respective distance
-		double distance = Math.abs(rightBound - leftBound);
-		leftBound = m - (distance / 2);
-		rightBound = leftBound + distance;
-	}
-
-	@Override
-	public void setStdDeviation(double s) {
-		//setting a new stdDeviation will shift a and b according to the mean
-		double variance = s * s;
-		double newDistance = Math.sqrt(variance * 12);
-		double m = getMean();
-		leftBound = m - newDistance / 2;
-		rightBound = leftBound + newDistance;
-	}
-
-	@Override
-	public void setMeanAndStdDeviation(double m, double s) {
-		setMean(m);
-		setStdDeviation(s);
-	}
-
+	/**
+	 * @see RandVar#getType()
+	 */
 	@Override
 	public String getType() {
 		return "Uniform";
 	}
 
+	/**)
+	 * @see RandVar#getVariance()
+	 */
+	@Override
+	public double getVariance() {
+		return Math.pow((upperBound-lowerBound),2)/12;
+	}
+
+	/**
+	 * @see RandVar#setMean(double)
+	 */
+	@Override
+	public void setMean(double m) {
+		double tmp=m-getMean();
+		lowerBound+=tmp;
+		upperBound+=tmp;
+	}
+
+	/**
+	 * @see RandVar#setMeanAndStdDeviation(double, double)
+	 */
+	@Override
+	public void setMeanAndStdDeviation(double m, double s) {
+		lowerBound = m-Math.sqrt(3)*s;
+		upperBound = m+Math.sqrt(3)*s;
+	}
+
+	/**
+	 * @see RandVar#setStdDeviation(double)
+	 */
+	@Override
+	public void setStdDeviation(double s) {
+		setMeanAndStdDeviation(getMean(),s);
+	}
+	
 	@Override
 	public String toString() {
-		return super.toString() + "Parameters: \n" +
-				"Left Bound: " + leftBound +
-				"\nRight Bound" + rightBound + "\n";
+		return super.toString() + 
+			"\tparameters:\n" +
+			"\t\tlowerBound: " + lowerBound + "\n" +
+			"\t\tupperBound: " + upperBound + "\n";
 	}
 	
 }

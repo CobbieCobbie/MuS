@@ -65,57 +65,7 @@ public abstract class Counter implements IStatisticObject{
 	 * @return the standard deviation
 	 */
 	public double getStdDeviation() {
-		/**
-		 * TODO Problem 2.1.1 - getStdDeviation
-		 * Implement this function!
-		 * You can use other methods of this class in order to calculate the standard deviation
-		 * Hint: See course syllabus 1.3.4
-		 */
-		double sdev = Math.sqrt(getVariance());
-		return sdev;
-	}
-
-	/**
-	 * Counts a new sample (set min/max and increment sample counter)
-	 * @param x the value to count
-	 */
-	public void count(double x) {
-		/**
-		 * TODO Problem 2.1.1 - count
-		 * Implement this function!
-		 * Hint: Take a look at the javadoc comment of this method
-		 */
-		min = Math.min(x,min);
-		max = Math.max(x,max);
-		numSamples = numSamples+1;
-	}
-
-	/**
-	 * Adds the given value to the sum of counted samples
-	 * @param value the value to add
-	 */
-	public void increaseSumPowerOne(double value) {
-		/**
-		 * TODO Problem 2.1.1 - increaseSumPowerOne
-		 * Implement this function!
-		 * This method updates internal data "sumPowerOne" which is needed for the calculation of empirical moments
-		 * Hint: DiscreteCounter and ContinuousCounter pass different values to this method
-		 */
-		sumPowerOne = sumPowerOne + value;
-	}
-
-	/**
-	 * Adds the given value to the sum of counted samples power two
-	 * @param value the value to add
-	 */
-	public void increaseSumPowerTwo(double value) {
-		/**
-		 * TODO Problem 2.1.1 - increaseSumPowerTwo
-		 * Implement this function!
-		 * This method updates internal data "sumPowerTwo" which is needed for the calculation of empirical moments
-		 * Hint: DiscreteCounter and ContinuousCounter pass different values to this method
-		 */
-		sumPowerTwo = sumPowerTwo + value;
+		return Math.sqrt(getVariance());
 	}
 	
 	/**
@@ -162,11 +112,37 @@ public abstract class Counter implements IStatisticObject{
 	}
 	
 	/**
+	 * Adds the given value to the sum of counted samples
+	 * @param value the value to add
+	 */
+	public void increaseSumPowerOne(double value) {
+		sumPowerOne += value;
+	}
+	
+	/**
 	 * Returns the sum of all counted samples power two
 	 * @return the sum of all samples power two
 	 */
 	public double getSumPowerTwo() {
 		return sumPowerTwo;
+	}
+	
+	/**
+	 * Adds the given value to the sum of counted samples power two
+	 * @param value the value to add
+	 */
+	public void increaseSumPowerTwo(double value) {
+		sumPowerTwo += value;
+	}
+	
+	/**
+	 * Counts a new sample (set min/max and increment sample counter)
+	 * @param x the value to count
+	 */
+	public void count(double x) {
+		min = (x < min ? x : min);
+		max = (x > max ? x : max);
+		numSamples++;
 	}
 	
 	/**
