@@ -21,18 +21,15 @@ import simulation.lib.statistic.IStatisticObject;
  * program/simulator parameters. Starts the simulation.
  */
 public class SimulationStudy {
-	/*
-	 * TODO Problem 4.2.3 - Set the simulation time here!
-	 * Mind the interarrival time of 1s to set the simulation time for approx. 10^1 or 10^5 customers
-     * Note: Units are real time units (seconds).
-     * They get converted to simulation time units in setSimulationParameters.
-     */
+
 	protected long cSimulationTime = 100000;
 
 	/**
 	 * Main method
 	 */
+
 	public static void main(String[] args) {
+		AutocorrelationTest.testAutocorrelation();
 		/*
 		 * create simulation object
 		 */

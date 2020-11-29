@@ -19,12 +19,14 @@ public class DiscreteAutocorrelationCounter extends DiscreteCounter{
 	{
 		super(variable, "discrete auto-correlation counter");
 		this.maxLag = maxLag;
+		reset();
 	}
 
 	public DiscreteAutocorrelationCounter(String variable, String type, int maxLag)
 	{
 		super(variable, type);
 		this.maxLag = maxLag;
+		reset();
 	}
 
 	public int getMaxLag()
