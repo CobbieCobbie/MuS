@@ -22,14 +22,14 @@ import simulation.lib.statistic.IStatisticObject;
  */
 public class SimulationStudy {
 
-	protected long cSimulationTime = 100000;
+	protected long cSimulationTime = 10000;
 
 	/**
 	 * Main method
 	 */
 
 	public static void main(String[] args) {
-		AutocorrelationTest.testAutocorrelation();
+		//AutocorrelationTest.testAutocorrelation();
 		/*
 		 * create simulation object
 		 */
@@ -99,6 +99,7 @@ public class SimulationStudy {
 	public String cthServerUtilization = "continuousTimeHistogramServerUtilization";
 
 	public String dtaWaitingTime = "discreteTimeAutocorrelationCounterWaitingTime";
+	public String dtaServiceTime = "discreteTimeAutocorrelationCounterServiceTime";
 
 	private Simulator simulator;
 
@@ -120,13 +121,10 @@ public class SimulationStudy {
 	private void setSimulationParameters() {
 		simulationTime = simulator.realTimeToSimTime(cSimulationTime);
 
-		/*
-		 * TODO Problem 4.2.1/2/5 - Create randVar instances
-		 * Create instances for this.randVarInterArrivalTime and this.randVarServiceTime
-		 * !!! Make sure that they use StdRNG objects with DIFFERENT SEEDS !!!
-		 * These random variables are later used in the Simulator class to create random interarrival and service times
-		 * Notice that the mean values need to be modified for 4.2.2 and 4.2.5!
-		 */
+		StdRNG rng = new StdRNG();
+		StdRNG rng2 = new StdRNG();
+		this.randVarInterArrivalTime = new Exponential(rng, 1,1);
+		this.randVarServiceTime = new Exponential(rng2, .95,.95);
 	}
 
 	/**
@@ -156,9 +154,8 @@ public class SimulationStudy {
 		statisticObjects.put(cthServerUtilization,
 				new ContinuousHistogram("server_utilization_over_time", 80, 0, 80, simulator));
 
-		/*
-		 * TODO Problem 4.2.5 - Create a DiscreteAutocorrelationCounter here
-		 */
+		statisticObjects.put(dtaServiceTime, new DiscreteAutocorrelationCounter("service time per customer", 20));
+		statisticObjects.put(dtaWaitingTime, new DiscreteAutocorrelationCounter("waiting time per customer", 20));
 	}
 
 
