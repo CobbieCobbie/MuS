@@ -8,93 +8,121 @@ import java.util.LinkedList;
 /**
  * This class implements a discrete time autocorrelation counter
  */
-public class DiscreteAutocorrelationCounter extends DiscreteCounter{
-
+public class DiscreteAutocorrelationCounter extends DiscreteCounter {
 	private int maxLag;
-	private double[] sumSquares;
+	private int cycleLength;
 	private double[] firstSamples;
-	LinkedList<Double> lastSamples;
+	private double[] squaredSums;
+	private LinkedList<Double> lastSamples;
 
-	public DiscreteAutocorrelationCounter(String variable, int maxLag)
-	{
-		super(variable, "discrete auto-correlation counter");
+	/**
+	 * Basic constructor
+	 * @param variable the variable to observe
+	 * @param maxLag window size of considered samples
+	 */
+	public DiscreteAutocorrelationCounter(String variable, int maxLag) {
+		super(variable, "counter type: discrete-time autocorrelation counter");
 		this.maxLag = maxLag;
 		reset();
 	}
-
-	public DiscreteAutocorrelationCounter(String variable, String type, int maxLag)
-	{
+	
+	/**
+	 * Constructor
+	 * @param variable the variable to observe
+	 * @param type type of this counter
+	 * @param maxLag window size of considered samples
+	 */
+	public DiscreteAutocorrelationCounter(String variable, String type, int maxLag) {
 		super(variable, type);
 		this.maxLag = maxLag;
 		reset();
 	}
 
-	public int getMaxLag()
-	{
-		return this.maxLag;
+	/**
+	 * Gets the maximum lag of the counter.
+	 * @return maxLag
+	 */
+	public int getMaxLag() {
+		return maxLag;
 	}
 
-	public void setMaxLag(int maxLag)
-	{
+	/**
+	 * Sets the maximum lag and then resets the counter.
+	 * @param maxLag
+	 */
+	public void setMaxLag(int maxLag){
 		this.maxLag = maxLag;
+		reset();
 	}
-
-	public void count(double x)
-	{
+	
+	/**
+	 * @see Counter#reset()
+	 */
+	@Override
+	public void reset() {
+		super.reset();
+		cycleLength = maxLag + 1;
+		firstSamples = new double[cycleLength];
+		lastSamples = new LinkedList<Double>();
+		squaredSums = new double[cycleLength];
+	}
+	
+	/**
+	 * @see Counter#count(double x)
+	 */
+	@Override
+	public void count(double x) {
 		super.count(x);
-		int i = (int) getNumSamples() - 1;
-		if (i < maxLag +1)
-		{
-			firstSamples[i] = x;
-		}
+		int n = (int) getNumSamples() - 1;
+		if(n < cycleLength)
+			firstSamples[n] = x;
 		lastSamples.push(x);
-		if (lastSamples.size() > maxLag  + 1)
-		{
+		if(lastSamples.size() > maxLag + 1)
 			lastSamples.pollLast();
-		}
-		int min = Math.min(maxLag, i);
-		for (int j = 0; j<=min;j++)
-		{
-			sumSquares[j] += x * lastSamples.get(j);
+		for(int i = 0; i <= (maxLag < n ? maxLag : n); i++) {
+			squaredSums[i] = squaredSums[i] + x * lastSamples.get(i);
 		}
 	}
 
-	public double getAutoCovariance(int lag)
-	{
+	/**
+	 * Get auto covariance of given lag.
+	 * @param lag 
+	 * @return auto covariance
+	 */
+	public double getAutoCovariance(int lag) {
+		if (lag <= maxLag && lag <= getNumSamples()){
+			double sumOfFirsts = 0;
+			double sumOfLasts = 0;
+			for(int i = 0; i < lag; i++){
+				sumOfFirsts += firstSamples[i];
+				sumOfLasts += lastSamples.get(i);
+			}
+			return (squaredSums[lag] - getMean() * (2 * getSumPowerOne() - sumOfFirsts - sumOfLasts)) / (double)(getNumSamples() - lag) + getMean() * getMean();
+		}else{  
+			throw new IllegalArgumentException("lag <= " + maxLag + " required");
+		}	
+	}
+	
+	/**
+	 * Get auto correlation of given lag.
+	 * @param lag
+	 * @return auto correlation
+	 */
+	public double getAutoCorrelation(int lag) {
 		if (lag <= maxLag){
-			double firstSum = 0;
-			double lastSum = 0;
-			for (int i = 0; i<lag; i++)
-			{
-				firstSum += firstSamples[i];
-				lastSum += lastSamples.get(i);
-			}
-			return (sumSquares[lag] - getMean() * (2 * getSumPowerOne() - firstSum - lastSum)) / (double)(getNumSamples() - lag)
-					+ getMean()*getMean();
-		}
-		else
-		{
-			throw new IllegalArgumentException("lag must be <= " + maxLag);
-		}
-	}
-
-	public double getAutoCorrelation(int lag){
-		if (lag <= maxLag)
-		{
-			if (getVariance() != 0)
-			{
-				return (getAutoCovariance(lag) / getVariance());
-			}
-			else{
+			if (getVariance() != 0){
+				return getAutoCovariance(lag) / getVariance();
+			}else{
 				return 1;
 			}
-		}
-		else
-		{
-			throw new IllegalArgumentException("lag must be <= " + maxLag);
+		}else{
+			throw new IllegalArgumentException("lag <= " + maxLag + " required");
 		}
 	}
-
+	
+	/**
+	 * @see Counter#report()
+	 */
 	@Override
 	public String report() {
 		String out  = super.report();
@@ -106,16 +134,9 @@ public class DiscreteAutocorrelationCounter extends DiscreteCounter{
 		}
 		return out;
 	}
-
-	@Override
-	public void reset()
-	{
-		super.reset();
-		this.firstSamples = new double[maxLag + 1];
-		this.lastSamples = new LinkedList<Double>();
-		this.sumSquares = new double[maxLag + 1];
-	}
-
+	/**
+	 * @see Counter#csvReport(String)
+	 */
 	@Override
 	public void csvReport(String outputdir){
 	    String content = "";

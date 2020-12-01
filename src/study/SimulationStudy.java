@@ -7,12 +7,16 @@ import java.util.HashMap;
 
 import simulation.lib.Simulator;
 import simulation.lib.counter.ContinuousCounter;
+import simulation.lib.counter.Counter;
 import simulation.lib.counter.DiscreteAutocorrelationCounter;
+import simulation.lib.counter.DiscreteConfidenceCounterWithRelativeError;
 import simulation.lib.counter.DiscreteCounter;
 import simulation.lib.histogram.ContinuousHistogram;
 import simulation.lib.histogram.DiscreteHistogram;
 import simulation.lib.randVars.RandVar;
+import simulation.lib.randVars.continous.ErlangK;
 import simulation.lib.randVars.continous.Exponential;
+import simulation.lib.randVars.continous.HyperExponential;
 import simulation.lib.rng.StdRNG;
 import simulation.lib.statistic.IStatisticObject;
 
@@ -21,15 +25,24 @@ import simulation.lib.statistic.IStatisticObject;
  * program/simulator parameters. Starts the simulation.
  */
 public class SimulationStudy {
-
-	protected long cSimulationTime = 10000;
+	 /*
+	 * TODO Problem 5.1 - Configure program arguments here
+	 * TODO Problem 5.1.1 - nInit and lBatch
+	 * TODO Problem 5.1.3 - Add attributes to configure your E[ST] and E[IAT] for the simulation
+	 * Here you can set the different parameters for your simulation
+	 * Note: Units are real time units (seconds).
+	 * They get converted to simulation time units in setSimulationParameters.
+	 */
+	 // e.g. protected cNInit = ...
+	 //protected cCvar = ... <- configuration Parameter for cVar[IAT]
 
 	/**
 	 * Main method
+	 * 
+	 * @param args
+	 *            - none
 	 */
-
 	public static void main(String[] args) {
-		//AutocorrelationTest.testAutocorrelation();
 		/*
 		 * create simulation object
 		 */
@@ -56,9 +69,29 @@ public class SimulationStudy {
 	protected boolean isCsvReport = true;
 
 	/**
-	 * Simulation time.
+	 * inter arrival time of customers (in simulation time).
 	 */
-	public long simulationTime;
+	public long interArrivalTime;
+
+	/**
+	 * service time of a customer (in simulation time).
+	 */
+	public long serviceTime;
+
+	/**
+	 * Number of customers for initialization.
+	 */
+	public long nInit;
+
+	/**
+	 * Length of batches.
+	 */
+	public long batchLength;
+
+	/**
+	 * Coefficient of variation.
+	 */
+	public double cVar;
 
 	/**
 	 * Random number generator for inter arrival times.
@@ -87,19 +120,36 @@ public class SimulationStudy {
 	 */
 	public long minQS;
 
+	/**
+	 * Number of batches in simulation.
+	 */
+	public long numBatches;
+
+	/*
+	 * TODO Problem 5.1 - naming your statistic objects
+	 * Here you have to set some names (as Sting objects) for all your statistic objects
+	 * They are later used to retrieve them from the dictionary
+	 */
 	// Strings used for receiving statisticobjects later in the dictionary.
 	public String dtcWaitingTime = "discreteTimeCounterWaitingTime";
 	public String dthWaitingTime = "discreteTimeHistogramWaitingTime";
 	public String dtcServiceTime = "discreteTimeCounterServiceTime";
 	public String dthServiceTime = "discreteTimeHistogramServiceTime";
-
 	public String ctcQueueOccupancy = "continuousTimeCounterQueueOccupancy";
 	public String cthQueueOccupancy = "continuousTimeHistogramQueueOccupancy";
 	public String ctcServerUtilization = "continuousTimeCounterServerUtilization";
 	public String cthServerUtilization = "continuousTimeHistogramServerUtilization";
+	public String dtcBatchWaitingTime = "discreteTimeCounterBatchWaitingTime";
+	public String tempdtcBatchWaitingTime = "temporaryDiscreteTimeCounterBatchWaitingTime";
+	public String dtcBatchServiceTime = "discreteTimeCounterBatchServiceTime";
+	public String tempdtcBatchServiceTime = "temporaryDiscreteTimeCounterBatchServiceTime";
+	public String ccreBatchWaitingTime = "confidenceCounterWithRelativeErrorBatchWaitingTime";
+	public String ccreWaitingTime = "confidenceCounterWithRelativeErrorWaitingTime";
 
-	public String dtaWaitingTime = "discreteTimeAutocorrelationCounterWaitingTime";
-	public String dtaServiceTime = "discreteTimeAutocorrelationCounterServiceTime";
+	public long numWaitingTimeExceeds5TimesServiceTime;
+	public long numBatchWaitingTimeExceeds5TimesBatchServiceTime;
+	public long numWaitingTimeExceeds0;
+	public String dtacBatchWaitingTime = "discreteTimeAutocorrelationCounterBatchWaitingTime";
 
 	private Simulator simulator;
 
@@ -119,12 +169,21 @@ public class SimulationStudy {
 	 * needed.
 	 */
 	private void setSimulationParameters() {
-		simulationTime = simulator.realTimeToSimTime(cSimulationTime);
 
-		StdRNG rng = new StdRNG();
-		StdRNG rng2 = new StdRNG();
-		this.randVarInterArrivalTime = new Exponential(rng, 1,1);
-		this.randVarServiceTime = new Exponential(rng2, .95,.95);
+		/*
+		 * TODO Problem 5.1.1 - Set simulation parameters
+		 * Hint: Take a look at the attributes of this class which have no usages yet (This may be indicated by your IDE)
+		 */
+		// this.nInit = cNInit;
+		// this.cVar = ...
+
+
+		/*
+		 * TODO Problem 5.1.2 - Create random variables for IAT and ST
+		 * You may use different random variables for this.randVarInterArrivalTime, since Cvar[IAT] = {0.5, 1, 2}
+		 * You can use this.cVar as a configuration parameter for Cvar[IAT]
+		 * !!! Make sure to use StdRNG objects with different seeds !!!
+		 */
 	}
 
 	/**
@@ -134,13 +193,11 @@ public class SimulationStudy {
 		maxQS = Long.MIN_VALUE;
 		minQS = Long.MAX_VALUE;
 
-		statisticObjects = new HashMap<>();
+		// Init numBatches
+		numBatches = 0;
 
+		statisticObjects = new HashMap<>();
 		statisticObjects.put(dtcWaitingTime, new DiscreteCounter("waiting time/customer"));
-		/*
-		 * Problem 4.2.4
-		 * The statistic object for counting the waiting times in a histogram is already created here
-		 */
 		statisticObjects.put(dthWaitingTime, new DiscreteHistogram("waiting_time_per_customer", 80, 0, 80));
 
 		statisticObjects.put(dtcServiceTime, new DiscreteCounter("service time/customer"));
@@ -154,8 +211,27 @@ public class SimulationStudy {
 		statisticObjects.put(cthServerUtilization,
 				new ContinuousHistogram("server_utilization_over_time", 80, 0, 80, simulator));
 
-		statisticObjects.put(dtaServiceTime, new DiscreteAutocorrelationCounter("service time per customer", 20));
-		statisticObjects.put(dtaWaitingTime, new DiscreteAutocorrelationCounter("waiting time per customer", 20));
+		/*
+		 * TODO Problem 5.1.1 - Create a DiscreteConfidenceCounterWithRelativeError
+		 * In order to check later if the simulation can be terminated according to the condition
+		 */
+		/*
+		 * TODO Problem 5.1.4 - Create counter to calculate the mean waiting time with batch means method
+		 */
+		/*
+		 * TODO Problem 5.1.4 - Provide means to keep track of E[WT] > 5 * E[ST]
+		 * !!! This is also called "waiting probability" in the sheet !!!
+		 */
+		/*
+		 * TODO Problem 5.1.4 - Create confidence counter for individual waiting time samples
+		 */
+		/*
+		 * TODO Problem 5.1.4 - Create confidence counter for to count waiting times with batch means method
+		 */
+		/*
+		 * TODO Problem 5.1.5 - Create a DiscreteAutocorrelationCounter for batch means
+		 */
+
 	}
 
 
@@ -176,11 +252,12 @@ public class SimulationStudy {
 			}
 		}
 		if (isDebugReport) {
-			for (IStatisticObject so : statisticObjects.values()) {
-				System.out.println(so.report());
-			}
+			/*
+			 * TODO Problem 5.1 - Output reporting information!
+			 * Print your statistic objects which are needed to answer the questions in the exercise sheet
+			 */
 
-			System.out.println("minimum queue size: " + minQS + "\n" + "maximum queue size: " + maxQS);
 		}
+
 	}
 }
